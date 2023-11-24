@@ -13,8 +13,8 @@ if($db->connect_error){
 	die("Connection failed: " . $db->connect_error);
 	}
 else{
-	//mysqli_select_db($db, $dbname);
-	echo "Connection successful";
+	mysqli_select_db($db, $dbname);
+	//echo "Connection successful";
 	}
 
 

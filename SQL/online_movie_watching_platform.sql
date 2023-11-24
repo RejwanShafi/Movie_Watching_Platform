@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 22, 2023 at 09:50 PM
+-- Generation Time: Nov 23, 2023 at 11:24 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -107,6 +107,18 @@ CREATE TABLE `hall` (
 INSERT INTO `hall` (`Hall_Number`, `Type`) VALUES
 (1, '2D'),
 (2, '3D');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hall_seats`
+--
+
+CREATE TABLE `hall_seats` (
+  `hall_number` int(11) NOT NULL,
+  `seat_no` varchar(25) NOT NULL,
+  `seat_status` int(6) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -315,17 +327,6 @@ CREATE TABLE `ticket` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ticket_seats`
---
-
-CREATE TABLE `ticket_seats` (
-  `Ticket_ID` int(11) NOT NULL,
-  `Seat_No` varchar(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `users`
 --
 
@@ -386,6 +387,12 @@ ALTER TABLE `hall`
   ADD PRIMARY KEY (`Hall_Number`);
 
 --
+-- Indexes for table `hall_seats`
+--
+ALTER TABLE `hall_seats`
+  ADD PRIMARY KEY (`hall_number`,`seat_no`);
+
+--
 -- Indexes for table `hall_timing`
 --
 ALTER TABLE `hall_timing`
@@ -437,12 +444,6 @@ ALTER TABLE `ticket`
   ADD KEY `fk_Ticket1` (`Customer_ID`),
   ADD KEY `fk_Ticket2` (`Hall_Number`),
   ADD KEY `fk_Ticket3` (`Movie_Index`);
-
---
--- Indexes for table `ticket_seats`
---
-ALTER TABLE `ticket_seats`
-  ADD PRIMARY KEY (`Seat_No`,`Ticket_ID`);
 
 --
 -- Indexes for table `users`
@@ -509,10 +510,16 @@ ALTER TABLE `customer`
   ADD CONSTRAINT `customer_ibfk_2` FOREIGN KEY (`Admin_ID`) REFERENCES `admin` (`Admin_ID`);
 
 --
+-- Constraints for table `hall_seats`
+--
+ALTER TABLE `hall_seats`
+  ADD CONSTRAINT `fbik_Hall_seats1` FOREIGN KEY (`hall_number`) REFERENCES `hall` (`Hall_Number`) ON UPDATE CASCADE;
+
+--
 -- Constraints for table `hall_timing`
 --
 ALTER TABLE `hall_timing`
-  ADD CONSTRAINT `hall_timing_ibfk_1` FOREIGN KEY (`Hall_Number`) REFERENCES `hall` (`Hall_Number`);
+  ADD CONSTRAINT `hall_timing_ibfk_1` FOREIGN KEY (`Hall_Number`) REFERENCES `hall` (`Hall_Number`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `movie_castings`
