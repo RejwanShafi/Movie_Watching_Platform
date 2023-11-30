@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>login</title>
+    <title>Login</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 
     <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900|RobotoDraft:400,100,300,500,700,900'>
@@ -26,7 +26,7 @@
 
 <body>
     <?php
-    include("dbconnect.php"); // connecting to database
+    include("connection/dbconnect.php"); // connecting to database
     error_reporting(0);
     session_start();
     if (isset($_POST['submit']))   // if button is submit

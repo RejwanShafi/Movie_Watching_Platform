@@ -1,6 +1,7 @@
 <?php
-session_start(); // starts session
-session_abort();// destroys all currently running session
-$url='index.php';
-header('Location: '.$url); // redirects to home page
+session_start(); //start session
+session_destroy(); // distroy all the current sessions
+$url = 'index.php';
+header('Location: ' . $url); // redireted to login page
+
 ?>
