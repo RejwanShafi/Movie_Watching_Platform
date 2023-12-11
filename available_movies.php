@@ -228,15 +228,7 @@ session_start(); //start temp session until logout/browser closed
 
         <br /><br /><br /><br />
         <div class="line"></div><br />
-        <div class="container">
-            <div style="text-align: right; ">
-                <a class="nav-link" href="available_movies.php"><button type="button" class="btn btn-secondary rounded-pill fw-bold" style="background-color: beige; color: black;">
-                        Show All Movies
-                    </button></a>
-
-
-            </div>
-        </div>
+        
     </div>
     </div>
 
