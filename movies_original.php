@@ -165,35 +165,6 @@ if (mysqli_num_rows($old_result) > 0) {
       height: 1.5px;
       background: rgba(0, 0, 0, 0.35);
     }
-
-
-
-
-
-    #CS {
-      margin-top: 40px;
-    }
-
-    #Form {
-      margin-bottom: 30px;
-    }
-    #commentInside {
-      
-      width: 35%;
-      text-indent: 5px;
-      
-
-    }
-
-    button {
-      background-color: rgb(200,0,50);
-      color: white;
-      padding: 8px 20px;
-      border-radius: 300px;
-      cursor: pointer;
-      margin-left:360px;
-    }
-
   </style>
 </head>
 
@@ -224,7 +195,13 @@ if (mysqli_num_rows($old_result) > 0) {
           </li>
 
           <!-- Rest of items -->
-          
+          <li class="nav-item">
+            <form class="d-flex" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            <!-- Menu items -->
+          </li>
           <?php
           if (empty($_SESSION["user_id"])) {
             echo '<li class="nav-item"><a href="login.php" class="nav-link active"style="color:white;font-style:italic;">Login</a> </li>
@@ -378,143 +355,14 @@ if (mysqli_num_rows($old_result) > 0) {
             <button>Buy Tickets</button>
           </a>
         <?php } ?>
-        
-        
 
 
 
-
-
-
-
-
-
-
-
-        
-
-
-        <!--comment section-->
 
       </div>
 
-      <div id="CS">
-          <h2>Comments</h2>
-          <form id="Form">
-            <textarea id="commentInside" placeholder="Write your opinion..." name="comments" required></textarea>
-            <br><button type="submit" name="submit_comment">Submit</button>
-          </form>
-
-
-
-
-
-        </div>
-
     </div>
   </div>
-
-  <?php
-
-  //FOR COMMENT
-
-  if ($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['submit_comment'])){
-    $customer_id=$_SESSION["user_id"];
-  $reply=$_POST['reply'];
-
-    $sql="INSERT INTO comment (Customer_ID, Movie_Index, Comments) VALUES ($customer_id, $movie_id, $comments)";
-    $s=$conn->prepare($sql);
-    $s->bind_param('iis', $customer_id, $movie_index, $comments);
-
-    if($s->execute()){
-      echo 'okay';
-    } else{
-      echo 'error: '. $s->error;
-    }
-    $s-> close();
-
-  }
-  ?>
-
-
-
-<?php
-
-//FOR REPLY
-
-if ($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['submit_reply'])){
-  $customer_id=$_SESSION["user_id"];
-  $reply=$_POST['reply'];
-
-  $sql="INSERT INTO comment_replies(Customer_ID, Movie_Index, Comments) VALUES ($customer_id, $movie_id, $reply)";
-  $s=$conn->prepare($sql);
-  $s->bind_param('iis', $customer_id, $movie_index, $comments);
-
-  if($s->execute()){
-    echo 'reply okay';
-  } else{
-    echo 'reply error: '. $s->error;
-  }
-  $s-> close();
-
-}
-?>
-
-
-
-<?php
-
-//tables join and displaying results
-
-
-$sql="SELECT cs.customer_id, c.movie_index, c.comments, rp.reply
-FROM comment c JOIN customer cs ON c.customer_id=cs.customer_id LEFT JOIN reply rp ON c.comment_id=rp.comment_id;";
-$res=$conn->query($sql);
-if ($res->num_rows>0){
-  while($row=$res->fetch_assoc()){
-    echo 'movie index: '.$row['movie_index']. '<br>';
-    echo 'customer ID: '.$row['customer_id']. '<br>';
-    echo 'comment: '.$row['comment']. '<br>';
-    echo 'reply: '.$row['reply']. '<br>';
-  } 
-} else {
-  echo 'No comments';
-}
-
-?>
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

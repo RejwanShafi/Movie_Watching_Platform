@@ -5,15 +5,15 @@ include("../connection/dbconnect.php");  // Include connection file
 error_reporting(0);  // Using to hide undefined index errors
 session_start(); // Start temp session until logout/browser closed
 if (!isset($_SESSION["adm_id"])) {
-
     // Redirect to the login page
     header("Location: index.php"); // 
 }
 
+
 ?>
 
 <head>
-    <title>Admin Home</title>
+    <title>Customer Details</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,14 +22,11 @@ if (!isset($_SESSION["adm_id"])) {
     <style>
         body {
             background-color: #e9ecef;
-            font-size: large;
-
 
         }
 
         .navbar {
             background-color: #22404A;
-
         }
 
         .navbar,
@@ -141,36 +138,61 @@ if (!isset($_SESSION["adm_id"])) {
             </div>
         </div>
     </nav><br /><br />
-    <?php
-    $admin_id = $_SESSION["adm_id"];
-    $sql = "SELECT * FROM users u INNER JOIN admins a on u.U_ID=a.Admin_ID WHERE u.U_ID=$admin_id;";
-    $result = mysqli_query($db, $sql);
-    $row = mysqli_fetch_assoc($result);
-    ?>
-    <div class="conatiner text-center" style="text-align: left;">
 
-        <h2>Welcome to Admin's Home Page </h2>
+    <center>
+        <section style="background-color:#a8dadc;">
+            <h2><i>Customer Info</i></h2><br />
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer ID</th>
+                        <th>Username</th>
+                        <th>Customer Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th> Action </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $sql = "SELECT u.*,c.Customer_Name,C.Phone_number FROM users u INNER JOIN customer c on U.U_ID=c.Customer_ID;";
+                    $result = mysqli_query($db, $sql);
+                    if ($result) {
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<tr>"; ?>
+                            <form method="POST" action="">
+                                <input type="hidden" name="Cust_ID" value="<?php echo $row['U_ID']; ?>">
+                                <?php
+                                echo "<td>" . $row['U_ID'] . "</td>";
+                                echo "<td>" . $row['Username'] . "</td>";
+                                echo "<td>" . $row['Customer_Name'] . "</td>";
+                                echo "<td>" . $row['Email'] . "</td>";
+                                echo "<td>" . $row['Phone_number'] . "</td>";
 
-        <hr style="height: 50px; color: red; margin: 15px 0;">
-        <section style="text-align: left;margin-left:5%;">
-            <b><i>Admin ID: <?php echo $row["Admin_ID"] ?> </i></b><br /><br />
-            <b><i>Admin Username: <?php echo $row["Username"] ?> </i></b><br /><br />
-            <b><i>Admin Name: <?php echo $row["Admin_Name"] ?> </i></b><br /><br />
-            <b><i>Email: <?php echo $row["Email"] ?> </i></b><br /><br />
+                                ?>
+                                <td>
+                                    <button class="deleteBtn" name="delete" style=' background-color: red;color: white;border: none; border-radius: 4px;padding: 8px 12px; '>Delete</button>
+                            </form>
+                            </td>
+                    <?php
+                            if (isset($_POST['delete']) && $_POST['Cust_ID'] == $row['U_ID']) {
+                                $sql = "DELETE FROM users WHERE U_ID = '" . $_POST['Cust_ID'] . "'";
+                                mysqli_query($db, $sql);
+                                header("Location: allmovies.php");
+                                exit();
+                            }
+                        }
+                        echo "</tr>";
+                    }
+                    ?>
+
+
+
+                </tbody>
+            </table>
+
         </section>
-        <hr style="height: 50px; color: red; margin: 15px 0;">
-        <div style="display: flex;">
-
-            <div style="width: 33%;"> <button style="padding: 10px 20px; border-radius: 20px; background-color: blue; color: white; border: none;"><a class="nav-link" href="customer_details.php"><b><i>Customer Details</i></b></a></button> </div>
-            <div style="width: 33%;"> <button style="padding: 10px 20px; border-radius: 20px; background-color: blue; color: white; border: none;"><a class="nav-link" href="allmovies.php"><b><i>All Movies</i></b></a></button> </div>
-            <div style="width: 33%;"> <button style="padding: 10px 20px; border-radius: 20px; background-color: blue; color: white; border: none;"><a class="nav-link" href="addmovie.php"><b><i>Add Movies</i></b></a></button> </div>
-        </div><br /><br />
-        <div style="display: flex;">
-            <div style="width: 33%;"> <button style="padding: 10px 20px; border-radius: 20px; background-color: blue; color: white; border: none;"><a class="nav-link" href="movie_request_check.php"><b><i>Movie Requests</i></b></a></button> </div>
-            <div style="width: 33%;"> <button style="padding: 10px 20px; border-radius: 20px; background-color: blue; color: white; border: none;"><a class="nav-link" href="payment_request.php"><b><i>Payment Approval</i></b></a></button> </div>
-            <div style="width: 33%;"> <button style="padding: 10px 20px; border-radius: 20px; background-color: blue; color: white; border: none;"><a class="nav-link" href="payment_history.php"><b><i>Payment History</i></b></a></button> </div>
-        </div>
-    </div>
+    </center>
 
 </body>
 

@@ -10,6 +10,9 @@ session_start(); //start temp session until logout/browser closed
 $movie_id = $_GET['id'];
 $isNewMovie = false;
 $isOldMovie = false;
+if(isset($_SESSION["user_id"])){
+  $uid=$_SESSION["user_id"];
+}
 
 //Retriving Movie Details
 $sql = "SELECT * FROM movies WHERE Movie_index=$movie_id";
@@ -31,7 +34,6 @@ if (mysqli_num_rows($old_result) > 0) {
   $oldMovie = mysqli_fetch_assoc($old_result);
   $stream_link=$oldMovie["Stream_Link"];
 }
-
 
 
 ?>
@@ -380,142 +382,22 @@ if (mysqli_num_rows($old_result) > 0) {
         <?php } ?>
         
         
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
         <!--comment section-->
 
       </div>
 
       <div id="CS">
           <h2>Comments</h2>
-          <form id="Form">
+          <form action="post_comment.php" method="POST"></form>
+          <input type="hidden" name="user_id" value="<?php echo $uid; ?>">
+          <input type="hidden" name="mov_id" value="<?php echo $movie_id; ?>">
+
             <textarea id="commentInside" placeholder="Write your opinion..." name="comments" required></textarea>
-            <br><button type="submit" name="submit_comment">Submit</button>
+            <p> <input type="submit" value="Register" name="submit">Submit now </p>
           </form>
-
-
-
-
-
         </div>
-
     </div>
   </div>
-
-  <?php
-
-  //FOR COMMENT
-
-  if ($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['submit_comment'])){
-    $customer_id=$_SESSION["user_id"];
-  $reply=$_POST['reply'];
-
-    $sql="INSERT INTO comment (Customer_ID, Movie_Index, Comments) VALUES ($customer_id, $movie_id, $comments)";
-    $s=$conn->prepare($sql);
-    $s->bind_param('iis', $customer_id, $movie_index, $comments);
-
-    if($s->execute()){
-      echo 'okay';
-    } else{
-      echo 'error: '. $s->error;
-    }
-    $s-> close();
-
-  }
-  ?>
-
-
-
-<?php
-
-//FOR REPLY
-
-if ($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['submit_reply'])){
-  $customer_id=$_SESSION["user_id"];
-  $reply=$_POST['reply'];
-
-  $sql="INSERT INTO comment_replies(Customer_ID, Movie_Index, Comments) VALUES ($customer_id, $movie_id, $reply)";
-  $s=$conn->prepare($sql);
-  $s->bind_param('iis', $customer_id, $movie_index, $comments);
-
-  if($s->execute()){
-    echo 'reply okay';
-  } else{
-    echo 'reply error: '. $s->error;
-  }
-  $s-> close();
-
-}
-?>
-
-
-
-<?php
-
-//tables join and displaying results
-
-
-$sql="SELECT cs.customer_id, c.movie_index, c.comments, rp.reply
-FROM comment c JOIN customer cs ON c.customer_id=cs.customer_id LEFT JOIN reply rp ON c.comment_id=rp.comment_id;";
-$res=$conn->query($sql);
-if ($res->num_rows>0){
-  while($row=$res->fetch_assoc()){
-    echo 'movie index: '.$row['movie_index']. '<br>';
-    echo 'customer ID: '.$row['customer_id']. '<br>';
-    echo 'comment: '.$row['comment']. '<br>';
-    echo 'reply: '.$row['reply']. '<br>';
-  } 
-} else {
-  echo 'No comments';
-}
-
-?>
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

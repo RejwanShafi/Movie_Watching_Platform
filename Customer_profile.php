@@ -122,14 +122,14 @@ if (isset($_POST['submit'])) {
                         <a class="nav-link" href="available_movies.php" style="color:white;font-style:italic;">Movies</a>
                     </li>
 
-                    <!-- Rest of items -->
+                    <!-- Rest of items 
                     <li class="nav-item">
                         <form class="d-flex" role="search">
                             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                             <button class="btn btn-outline-success" type="submit">Search</button>
                         </form>
-                        <!-- Menu items -->
-                    </li>
+                        
+                    </li>-->
                     <?php
                     if (empty($_SESSION["user_id"])) {
                         echo '<li class="nav-item"><a href="login.php" class="nav-link active"style="color:white;font-style:italic;">Login</a> </li>

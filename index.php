@@ -89,7 +89,6 @@ session_start(); //start temp session until logout/browser closed
 
 
 <body>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <nav class="navbar navbar-expand-lg">
 
         <div class="container-fluid">
@@ -115,14 +114,16 @@ session_start(); //start temp session until logout/browser closed
                     </li>
 
                     <!-- Rest of items -->
-                    <li class="nav-item">
+                    <!---<li class="nav-item">
                         <form class="d-flex" role="search">
                             <input id="search" class="form-control me-2" type="search" id="search" placeholder="Search" aria-label="Search">
                             <button class="btn btn-outline-success" type="submit" id="search-btn">Search</button>
 
                         </form>
-                        <!-- Menu items -->
-                    </li>
+                        
+                    </li>-->
+
+                    <!-- Menu items -->
                     <?php
                     if (empty($_SESSION["user_id"])) {
                         echo '<li class="nav-item"><a href="login.php" class="nav-link active"style="color:white;font-style:italic;">Login</a> </li>
@@ -227,29 +228,7 @@ session_start(); //start temp session until logout/browser closed
 
         </div>
     </div>
-    <div id="searchresult"></div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
-    <script>
-        $("#search-btn").click(function(event) {
-
-            event.preventDefault();
-
-            var searchTerm = $("#search").val();
-
-            $.ajax({
-                url: "search.php",
-                type: "POST",
-                data: {
-                    search: searchTerm
-                },
-                success: function(data) {
-                    $("#movies").html(data);
-                }
-            });
-
-        });
-    </script>
+    
 
 </body>
 

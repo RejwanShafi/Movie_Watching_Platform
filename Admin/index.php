@@ -43,7 +43,7 @@ if(isset($_POST['submit']))
 	
 	                        if(is_array($row))
 								{
-                                    	$_SESSION["adm_id"] = $row['adm_id'];
+                                    	$_SESSION["adm_id"] = $row['Admin_ID'];
                                         $success="Login Successful";
 										 header("refresh:1;url=admin_profile.php");
 	                            } 

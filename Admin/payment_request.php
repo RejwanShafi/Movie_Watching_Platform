@@ -1,0 +1,1 @@
+Jara jara payment korse tader ta admimn ekhan theke accept korbe

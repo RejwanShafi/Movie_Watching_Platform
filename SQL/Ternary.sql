@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 10, 2023 at 07:12 AM
+-- Generation Time: Dec 10, 2023 at 07:43 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -44,26 +44,25 @@ INSERT INTO `admins` (`Admin_ID`, `Admin_Name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `comment`
+-- Table structure for table `comments`
 --
 
-CREATE TABLE `comment` (
+CREATE TABLE `comments` (
+  `C_ID` int(11) NOT NULL,
   `Customer_ID` int(11) NOT NULL,
-  `Movie_index` int(11) NOT NULL,
-  `Comments` text DEFAULT NULL
+  `Movie_Index` int(11) NOT NULL,
+  `Comment_Text` text NOT NULL,
+  `Comment_Date` date NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Table structure for table `comment_replies`
+-- Dumping data for table `comments`
 --
 
-CREATE TABLE `comment_replies` (
-  `Customer_ID` int(11) NOT NULL,
-  `Movie_index` int(11) NOT NULL,
-  `Reply` varchar(500) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `comments` (`C_ID`, `Customer_ID`, `Movie_Index`, `Comment_Text`, `Comment_Date`) VALUES
+(1, 9, 3, 'Horrorr', '2023-12-10'),
+(2, 5, 3, 'Spooky', '2023-12-10'),
+(3, 6, 1, 'Marvelous', '2023-12-10');
 
 -- --------------------------------------------------------
 
@@ -99,16 +98,40 @@ INSERT INTO `customer` (`Customer_ID`, `Customer_Name`, `Phone_number`, `Admin_I
 
 CREATE TABLE `hall` (
   `Hall_Number` int(11) NOT NULL,
-  `Type` varchar(20) DEFAULT NULL
+  `Type` varchar(20) DEFAULT NULL,
+  `seats` int(11) NOT NULL,
+  `Price` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `hall`
 --
 
-INSERT INTO `hall` (`Hall_Number`, `Type`) VALUES
-(1, '2D'),
-(2, '3D');
+INSERT INTO `hall` (`Hall_Number`, `Type`, `seats`, `Price`) VALUES
+(1, '2D', 30, 200),
+(2, '3D', 20, 500);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hall_details`
+--
+
+CREATE TABLE `hall_details` (
+  `Hall_Number` int(11) NOT NULL,
+  `Times` time NOT NULL,
+  `Remaining_Seat` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `hall_details`
+--
+
+INSERT INTO `hall_details` (`Hall_Number`, `Times`, `Remaining_Seat`) VALUES
+(1, '14:30:00', 30),
+(1, '18:00:00', 30),
+(2, '12:00:00', 20),
+(2, '15:30:30', 20);
 
 -- --------------------------------------------------------
 
@@ -167,27 +190,6 @@ INSERT INTO `hall_seats` (`hall_number`, `seat_no`, `seat_status`) VALUES
 (2, 'E2', NULL),
 (2, 'E3', NULL),
 (2, 'E4', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `hall_timing`
---
-
-CREATE TABLE `hall_timing` (
-  `Hall_Number` int(11) NOT NULL,
-  `Times` time NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `hall_timing`
---
-
-INSERT INTO `hall_timing` (`Hall_Number`, `Times`) VALUES
-(1, '14:30:00'),
-(1, '18:00:00'),
-(2, '12:00:00'),
-(2, '15:30:30');
 
 -- --------------------------------------------------------
 
@@ -324,8 +326,8 @@ CREATE TABLE `new_movies` (
 --
 
 INSERT INTO `new_movies` (`Movie_index`, `hall_number`) VALUES
-(1, NULL),
-(3, NULL);
+(3, 1),
+(1, 2);
 
 -- --------------------------------------------------------
 
@@ -364,6 +366,29 @@ CREATE TABLE `payment` (
   `Customer` int(11) DEFAULT NULL,
   `Amount` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `replies`
+--
+
+CREATE TABLE `replies` (
+  `r_id` int(11) NOT NULL,
+  `c_id` int(11) NOT NULL,
+  `Customer_ID` int(11) NOT NULL,
+  `Movie_Index` int(11) NOT NULL,
+  `Reply` text NOT NULL,
+  `Reply_Date` date NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `replies`
+--
+
+INSERT INTO `replies` (`r_id`, `c_id`, `Customer_ID`, `Movie_Index`, `Reply`, `Reply_Date`) VALUES
+(1, 2, 4, 3, 'Not so spooky.', '2023-12-10'),
+(2, 1, 3, 3, 'Rather I found it funny', '2023-12-10');
 
 -- --------------------------------------------------------
 
@@ -420,17 +445,12 @@ ALTER TABLE `admins`
   ADD PRIMARY KEY (`Admin_ID`);
 
 --
--- Indexes for table `comment`
+-- Indexes for table `comments`
 --
-ALTER TABLE `comment`
-  ADD PRIMARY KEY (`Customer_ID`,`Movie_index`),
-  ADD KEY `comment_ibfk_1` (`Movie_index`);
-
---
--- Indexes for table `comment_replies`
---
-ALTER TABLE `comment_replies`
-  ADD PRIMARY KEY (`Customer_ID`,`Movie_index`,`Reply`);
+ALTER TABLE `comments`
+  ADD PRIMARY KEY (`C_ID`),
+  ADD KEY `comments_ibfk_1` (`Customer_ID`),
+  ADD KEY `comments_ibfk_2` (`Movie_Index`);
 
 --
 -- Indexes for table `customer`
@@ -446,16 +466,16 @@ ALTER TABLE `hall`
   ADD PRIMARY KEY (`Hall_Number`);
 
 --
+-- Indexes for table `hall_details`
+--
+ALTER TABLE `hall_details`
+  ADD PRIMARY KEY (`Hall_Number`,`Times`);
+
+--
 -- Indexes for table `hall_seats`
 --
 ALTER TABLE `hall_seats`
   ADD PRIMARY KEY (`hall_number`,`seat_no`);
-
---
--- Indexes for table `hall_timing`
---
-ALTER TABLE `hall_timing`
-  ADD PRIMARY KEY (`Hall_Number`,`Times`);
 
 --
 -- Indexes for table `movies`
@@ -497,6 +517,15 @@ ALTER TABLE `payment`
   ADD KEY `Customer` (`Customer`);
 
 --
+-- Indexes for table `replies`
+--
+ALTER TABLE `replies`
+  ADD PRIMARY KEY (`r_id`),
+  ADD KEY `c_id` (`c_id`),
+  ADD KEY `Customer_ID` (`Customer_ID`),
+  ADD KEY `Movie_Index` (`Movie_Index`);
+
+--
 -- Indexes for table `ticket`
 --
 ALTER TABLE `ticket`
@@ -516,6 +545,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `comments`
+--
+ALTER TABLE `comments`
+  MODIFY `C_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `hall`
 --
 ALTER TABLE `hall`
@@ -526,6 +561,12 @@ ALTER TABLE `hall`
 --
 ALTER TABLE `movies`
   MODIFY `Movie_index` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+
+--
+-- AUTO_INCREMENT for table `replies`
+--
+ALTER TABLE `replies`
+  MODIFY `r_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `ticket`
@@ -550,17 +591,11 @@ ALTER TABLE `admins`
   ADD CONSTRAINT `admins_ibfk_1` FOREIGN KEY (`Admin_ID`) REFERENCES `users` (`U_ID`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `comment`
+-- Constraints for table `comments`
 --
-ALTER TABLE `comment`
-  ADD CONSTRAINT `comment_ibfk_1` FOREIGN KEY (`Movie_index`) REFERENCES `movies` (`Movie_index`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `comment_ibfk_2` FOREIGN KEY (`Customer_ID`) REFERENCES `users` (`U_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `comment_replies`
---
-ALTER TABLE `comment_replies`
-  ADD CONSTRAINT `comment_replies_ibfk_1` FOREIGN KEY (`Customer_ID`,`Movie_index`) REFERENCES `comment` (`Customer_ID`, `Movie_index`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `comments`
+  ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`Customer_ID`) REFERENCES `customer` (`Customer_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`Movie_Index`) REFERENCES `movies` (`Movie_index`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `customer`
@@ -570,16 +605,16 @@ ALTER TABLE `customer`
   ADD CONSTRAINT `customer_ibfk_2` FOREIGN KEY (`Admin_ID`) REFERENCES `admins` (`Admin_ID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `hall_details`
+--
+ALTER TABLE `hall_details`
+  ADD CONSTRAINT `hall_details_ibfk_1` FOREIGN KEY (`Hall_Number`) REFERENCES `hall` (`Hall_Number`) ON UPDATE CASCADE;
+
+--
 -- Constraints for table `hall_seats`
 --
 ALTER TABLE `hall_seats`
   ADD CONSTRAINT `fbik_Hall_seats1` FOREIGN KEY (`hall_number`) REFERENCES `hall` (`Hall_Number`) ON UPDATE CASCADE;
-
---
--- Constraints for table `hall_timing`
---
-ALTER TABLE `hall_timing`
-  ADD CONSTRAINT `hall_timing_ibfk_1` FOREIGN KEY (`Hall_Number`) REFERENCES `hall` (`Hall_Number`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `movie_castings`
@@ -612,6 +647,14 @@ ALTER TABLE `old_movies`
 ALTER TABLE `payment`
   ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`Approved_by`) REFERENCES `admins` (`Admin_ID`),
   ADD CONSTRAINT `payment_ibfk_2` FOREIGN KEY (`Customer`) REFERENCES `customer` (`Customer_ID`);
+
+--
+-- Constraints for table `replies`
+--
+ALTER TABLE `replies`
+  ADD CONSTRAINT `replies_ibfk_1` FOREIGN KEY (`c_id`) REFERENCES `comments` (`C_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `replies_ibfk_2` FOREIGN KEY (`Customer_ID`) REFERENCES `users` (`U_ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `replies_ibfk_3` FOREIGN KEY (`Movie_Index`) REFERENCES `movies` (`Movie_index`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `ticket`

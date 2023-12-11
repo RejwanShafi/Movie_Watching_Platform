@@ -1,0 +1,1 @@
+payment table ta ticket aer table er sthe ticket id diye link kore ticket aer sob infor show korbe
