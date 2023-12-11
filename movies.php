@@ -10,7 +10,7 @@ session_start(); //start temp session until logout/browser closed
 $movie_id = $_GET['id'];
 $isNewMovie = false;
 $isOldMovie = false;
-$U_id=$_SESSION["user_id"];
+$U_id = $_SESSION["user_id"];
 
 //Retriving Movie Details
 $sql = "SELECT * FROM movies WHERE Movie_index=$movie_id";
@@ -32,52 +32,6 @@ if (mysqli_num_rows($old_result) > 0) {
     $oldMovie = mysqli_fetch_assoc($old_result);
     $stream_link = $oldMovie["Stream_Link"];
 }
-function createCommentRow($data) {
-    global $db;
-
-    $response = '
-            <div class="comment">
-                <div class="user">'.$data['Customer_Name'].' <span class="time">'.$data['Comment_Date'].'</span></div>
-                <div class="userComment">'.$data['Comment_Text'].'</div>
-                <div class="reply"><a href="javascript:void(0)" data-commentID="'.$data['C_ID'].'" onclick="reply(this)">REPLY</a></div>
-                <div class="replies">';
-    $sql = $db->query("SELECT r.r_id, c.Customer_Name, r.Reply, r.Reply_Date FROM replies r INNER JOIN customer c ON r.Customer_ID = c.Customer_ID WHERE r.c_id = '".$data['C_ID']."'  ORDER BY r.r_id DESC LIMIT 1");
-    while($dataR = $sql->fetch_assoc())
-        $response .= createCommentRow($dataR);
-
-    $response .= '
-                        </div>
-            </div>
-        ';
-
-    return $response;
-}
-
-if (isset($_POST['getAllComments'])) {
-    $start = $db->real_escape_string($_POST['start']);
-    $response="";
-    $sql = $db->query("SELECT Customer_Name,Comment_Text, c.Comment_Date FROM comments c INNER JOIN customer u on c.Customer_ID=u.Customer_ID WHERE C.Movie_Index='$movie_id' ORDER by c.C_ID DESC LIMIT $start, 20");
-    while($data = $sql->fetch_assoc())
-        $response .= createCommentRow($data);
-
-    exit($response);
-}
-if (isset($_POST['addComment'])) {
-    $comment = $db->real_escape_string($_POST['comment']);
-    $isReply = $db->real_escape_string($_POST['isReply']);
-    $commentID = $db->real_escape_string($_POST['commentID']);
-
-    if ($isReply != 'true') {
-        $db->query("INSERT INTO replies (c_id, Customer_ID, Movie_Index, Reply,Reply_Date) VALUES ('$commentID','".$_SESSION['userID']."','$movie_id', '$comment', CURDATE())");
-        $sql = $db->query("SELECT r.r_id, u.Customer_Name, r.Reply, r.Reply_Date FROM replies r INNER JOIN customer u ON r.Customer_ID = u.Customer_ID WHERE r.Movie_Index=$movie_id ORDER BY replies.id DESC LIMIT 1");
-    } else {
-        $db->query("INSERT INTO comments (Customer_ID, Movie_Index,Comment_Text, Comment_Date) VALUES ('".$_SESSION['userID']."','$movie_id','$comment',CURDATE())");
-        $sql = $db->query("SELECT c.C_ID, u.Customer_Name, c.Comment_Text, c.Comment_Date FROM comments c INNER JOIN customer u ON c.Customer_ID = u.Customer_ID WHERE c.Movie_Index=$movie_id ORDER BY c.C_ID DESC LIMIT 1");
-    }
-
-    $data = $sql->fetch_assoc();
-    exit(createCommentRow($data));
-}
 
 if (isset($_POST["Buy_Ticket"]) || isset($_POST["addComments"])) {
 
@@ -87,20 +41,15 @@ if (isset($_POST["Buy_Ticket"]) || isset($_POST["addComments"])) {
         // User not logged in
         header("Location: login.php");
         exit('Success');
-    }else{
-        if(isset($_POST["Buy_Ticket"])) {
-        
+    } else {
+        if (isset($_POST["Buy_Ticket"])) {
+
             // Redirect to ticket purchase page
-            header("Location: Ticket_Purchase.php?id=$movie_id"); 
+            header("Location: Ticket_Purchase.php?id=$movie_id");
             exit;
-      
-          } 
-          
+        }
     }
-    
 }
-$sqlNumComments = $db->query("SELECT C.C_ID FROM comments C WHERE C.Movie_Index=$movie_id ");
-$numComments = $sqlNumComments->num_rows;
 
 ?>
 
@@ -262,7 +211,21 @@ $numComments = $sqlNumComments->num_rows;
             margin-left: 20px;
         }
 
-    
+        #CS {
+            margin-top: 40px;
+        }
+
+        #Form {
+            margin-bottom: 30px;
+        }
+
+        #commentInside {
+
+            width: 35%;
+            text-indent: 5px;
+
+        }
+
         button {
             background-color: rgb(200, 0, 50);
             color: white;
@@ -459,109 +422,88 @@ $numComments = $sqlNumComments->num_rows;
                 <!--comment section-->
 
             </div>
+            <div id="CS">
+          <h2>Comments</h2>
+            <form id="Form" method="post" action="movies.php">
+            <textarea id="commentInside" placeholder="Write your opinion..." required></textarea>
+            <br><button type="submit" name = "submit_comment">Submit</button>
+          </form>
+        </div>
+        <?php
+
+//FOR COMMENT
+
+if ($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['submit_comment'])){
+  $customer_id=$_POST['customer_id'];
+  $movie_index=$_POST['movie_index'];
+  $comments=$_POST['comments'];
+
+  $sql="INSERT INTO comment (customer_id, movie_index, comments) VALUES ($customer_id, $movie_index, $comments)";
+  $s=$conn->prepare($sql);
+  $s->bind_param('iis', $customer_id, $movie_index, $comments);
+
+  if($s->execute()){
+    echo 'okay';
+  } else{
+    echo 'error: '. $s->error;
+  }
+  $s-> close();
+
+}
+
+
+
+
+
+//FOR REPLY
+
+if ($_SERVER['REQUEST_METHOD']=='POST' && isset($_POST['submit_comment'])){
+$customer_id=$_POST['customer_id'];
+$movie_index=$_POST['movie_index'];
+$reply=$_POST['reply'];
+
+$sql="INSERT INTO reply (customer_id, movie_index, reply) VALUES ($customer_id, $movie_index, $reply)";
+$s=$conn->prepare($sql);
+$s->bind_param('iis', $customer_id, $movie_index, $reply);
+
+if($s->execute()){
+  echo 'reply okay';
+} else{
+  echo 'reply error: '. $s->error;
+}
+$s-> close();
+
+}
+
+
+//tables join and displaying results
+
+
+$sql="SELECT cs.customer_id, c.movie_index, c.comments, rp.reply
+FROM comment c JOIN customer cs ON c.customer_id=cs.customer_id LEFT JOIN reply rp ON rp.movie_index=c.movie_index";
+$res=$conn->query($sql);
+if ($res->num_rows>0){
+while($row=$res->fetch_assoc()){
+  echo 'movie index: '.$row['movie_index']. '<br>';
+  echo 'customer ID: '.$row['customer_id']. '<br>';
+  echo 'comment: '.$row['comment']. '<br>';
+  echo 'reply: '.$row['reply']. '<br>';
+} 
+} else {
+echo 'No comments';
+}
+
+?>
+
 
         </div><br /><br />
-        <!-- Comment Section -->
-        <div class="row">
-            <div class="col-md-12">
-                <form action="" method="POST">
-                    <textarea class="form-control" id="mainComment" placeholder="Add Public Comment" cols="30" rows="2"></textarea><br>
-                    <button style="float:right"  class="btn-primary btn" name="addComments" addonclick="isReply = false;" id="addComment">Add Comment</button>
-                </form>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <h2><b id="numComments" style="color:white;"><?php echo $numComments ?> Comments</b></h2>
-                <div class="userComments">
-
-                </div>
-            </div>
-        </div>
-
-    </div>
-    <div class="row replyRow" style="display:none">
-        <div class="col-md-12">
-            <textarea class="form-control" id="replyComment" placeholder="Add Public Comment" cols="30" rows="2"></textarea><br>
-            <button style="float:right" class="btn-primary btn" onclick="isReply = true;" id="addReply">Add Reply</button>
-            <button style="float:right" class="btn-default btn" onclick="$('.replyRow').hide();">Close</button>
-        </div>
-    </div>
+        
+        
 
     <script src="http://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script type="text/javascript">
-        var isReply = false, commentID = 0, max = <?php echo $numComments ?>;
-
-        $(document).ready(function () {
-        $("#addComment, #addReply").on('click', function () {
-            var comment;
-
-            if (!isReply)
-                comment = $("#mainComment").val();
-            else
-                comment = $("#replyComment").val();
-
-            if (comment.length > 5) {
-                $.ajax({
-                    url: 'tt.php',
-                    method: 'POST',
-                    dataType: 'text',
-                    data: {
-                        addComment: 1,
-                        comment: comment,
-                        isReply: isReply,
-                        commentID: commentID
-                    }, success: function (response) {
-                        max++;
-                        $("#numComments").text(max + " Comments");
-
-                        if (!isReply) {
-                            $(".userComments").prepend(response);
-                            $("#mainComment").val("");
-                        } else {
-                            commentID = 0;
-                            $("#replyComment").val("");
-                            $(".replyRow").hide();
-                            $('.replyRow').parent().next().append(response);
-                        }
-                    }
-                });
-            } else
-                alert('Please Check Your Inputs');
-        });
-
-       
-
-        getAllComments(0, max);
-    });
-
-    function reply(caller) {
-        commentID = $(caller).attr('data-commentID');
-        $(".replyRow").insertAfter($(caller));
-        $('.replyRow').show();
-    }
-
-    function getAllComments(start, max) {
-        if (start > max) {
-            return;
-        }
-
-        $.ajax({
-            url: 'tt.php',
-            method: 'POST',
-            dataType: 'text',
-            data: {
-                getAllComments: 1,
-                start: start
-            }, success: function (response) {
-                $(".userComments").append(response);
-                getAllComments((start+20), max);
-            }
-        });
-    }
-    </script>
+    
 
 </body>
 
