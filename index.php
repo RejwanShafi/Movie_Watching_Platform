@@ -113,17 +113,6 @@ session_start(); //start temp session until logout/browser closed
                         <a class="nav-link" href="available_movies.php" style="color:white;font-style:italic;">Movies</a>
                     </li>
 
-                    <!-- Rest of items -->
-                    <!---<li class="nav-item">
-                        <form class="d-flex" role="search">
-                            <input id="search" class="form-control me-2" type="search" id="search" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-outline-success" type="submit" id="search-btn">Search</button>
-
-                        </form>
-                        
-                    </li>-->
-
-                    <!-- Menu items -->
                     <?php
                     if (empty($_SESSION["user_id"])) {
                         echo '<li class="nav-item"><a href="login.php" class="nav-link active"style="color:white;font-style:italic;">Login</a> </li>
