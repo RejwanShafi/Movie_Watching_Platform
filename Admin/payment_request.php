@@ -146,10 +146,10 @@ $admin_id = $_SESSION["adm_id"];
                 <thead>
                     <tr>
                         <th>Payment_ID</th>
-                        <th>Customer_ID</th>
+                        
                         <th>Admin_ID</th>
                         <th>Amount</th>
-                        <th>Ticket_ID</th>
+                        <th>Customer_ID</th>
                         <th>Movie Name</th>
                         <th>Purchase Date</th>
                         <th>Action</th>
@@ -173,7 +173,7 @@ $admin_id = $_SESSION["adm_id"];
                                 echo "<td>" . $row['Customer'] . "</td>";
                                 echo "<td>" . $row['Approved_by'] . "</td>";
                                 echo "<td>" . $row['Amount'] . "</td>";
-                                echo "<td>" . $row['Ticket_ID'] . 'mins' . "</td>";
+                                echo "<td>" . $row['Ticket_ID'] . "</td>";
                                 echo "<td>" . $row['Title'] . "</td>";
                                 echo "<td>" . $row['Purchased_Date'] . "</td>";
                                 ?>

@@ -146,9 +146,9 @@ $admin_id = $_SESSION["adm_id"];
                 <thead>
                     <tr>
                         <th>Payment_ID</th>
-                        <th>Customer_ID</th>
+                        
                         <th>Amount</th>
-                        <th>Ticket_ID</th>
+                        <th>Customer_ID</th>
                         <th>Movie Name</th>
                         <th>Purchase Date</th>
                         <th>Premier Date </th>

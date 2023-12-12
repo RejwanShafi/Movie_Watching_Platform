@@ -13,7 +13,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_movie'])) {
     $userId = $_POST['userId'];
 
     // Update the requested movie to NULL for the selected customer
-    $updateQuery = "UPDATE customer SET Requested_Movie = NULL,Admin_ID=$admin_id WHERE Customer_ID = $userId";
+    $updateQuery = "UPDATE customer SET Requested_Movie = NULL WHERE Customer_ID = $userId";
+    $updateResult = mysqli_query($db, $updateQuery);
+    
+    $updateQuery = "UPDATE customer SET Admin_ID=$admin_id WHERE Customer_ID = $userId";
     $updateResult = mysqli_query($db, $updateQuery);
 
     if ($updateResult) {
@@ -36,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_movie'])) {
     if ($updateResult) {
         // Successfully updated requested movie to NULL
         // Redirect or refresh the page as needed
-        header("Location: requested_movies.php");
+        header("Location: movie_request_check.php");
         exit(); // Stop further execution
     } else {
         // Handle error if the update query fails
