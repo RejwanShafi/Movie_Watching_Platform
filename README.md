@@ -1,8 +1,11 @@
 # BracU Online Movie Watching Platform
 ---
 CSE370-DATABASE SYSTEMS-project BracU Online Movie Watching Platform.
+
 Faculty: Najeefa Nikhat Choudhury (NNC)
+
 Lab Faculty: Mr. Rakin Bin Rabbani (RBR), Ms. Sumaiya Tanjil Khan (STK)
+
 ---
 ## _Features:_
 - User Register and Login
