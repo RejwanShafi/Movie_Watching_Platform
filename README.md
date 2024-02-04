@@ -26,6 +26,14 @@ Lab Faculty: Mr. Rakin Bin Rabbani (RBR), Ms. Sumaiya Tanjil Khan (STK)
 - Admin panel for managing users, movies and tickets
 
 ---
+
+---
+## _Limitation:_
+- We could not work on the comment section
+- The comment does not insert in the database
+- The existing comment does not show
+---
+
 ## _Groupmates_
 1. Rejwan Shafi 
 2. Tammim Liza Khan
