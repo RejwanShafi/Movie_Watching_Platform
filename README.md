@@ -35,7 +35,7 @@ Lab Faculty: Mr. Rakin Bin Rabbani (RBR), Ms. Sumaiya Tanjil Khan (STK)
 ---
 
 ## _Groupmates_
-1. Rejwan Shafi 
+1. [Rejwan Shafi](https://www.example.com)
 2. Tammim Liza Khan
 3. Abdur Rahman Shihab
 4. Zubayer Hassan
